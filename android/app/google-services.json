@@ -1,0 +1,39 @@
+{
+  "project_info": {
+    "project_number": "368469061850",
+    "project_id": "nrkfiness",
+    "storage_bucket": "nrkfiness.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:368469061850:android:417cdd93992f4a37f935e3",
+        "android_client_info": {
+          "package_name": "com.example.nrkfitness"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "368469061850-lqp52f80e0ief8rge0mcq8i5e0673qca.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyDoAxWAMAX8Ii-4VhWRR1kE5aNvWUtJfTc"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "368469061850-lqp52f80e0ief8rge0mcq8i5e0673qca.apps.googleusercontent.com",
+              "client_type": 3
+            }
+          ]
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
