@@ -195,10 +195,10 @@ Widget _loginButtonBuilder(
               );
              
             } catch (e) {
-              debugPrint(e.toString());
+             
             }
           },
-          text: 'Continue',
+          text: 'Login',
         ),
       ),
     ],
