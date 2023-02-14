@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:nrkfitness/features/authentication/views/screens/login_screen.dart';
+import 'package:nrkfitness/features/authentication/views/screens/register_screen.dart';
 
  
 
@@ -13,7 +13,7 @@ class SplashScreen extends StatelessWidget {
       onTap: () {
         Navigator.push(
           context,
-          MaterialPageRoute(builder: (context) => const LoginScreen()),
+          MaterialPageRoute(builder: (context) => const RegisterScreen()),
         );
       },
       child: Scaffold(

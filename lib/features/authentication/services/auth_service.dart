@@ -1,51 +1,75 @@
-import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
-import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter/widgets.dart';
 
-class AuthService {
+import '../models/user_model.dart';
 
-  static final _auth = FirebaseAuth.instance;
+class AuthService extends ChangeNotifier {
+  final FirebaseAuth _auth = FirebaseAuth.instance;
 
- static final _fs = FirebaseFirestore.instance;
- 
+  late String _verificationId;
+  int? _resendToken;
+  String? _phoneNumber;
+  bool _isCodeSent = false;
 
+  String get verificationId => _verificationId;
+  int? get resendToken => _resendToken;
+  bool get isCodeSent => _isCodeSent;
+  String? get phoneNumber => _phoneNumber;
 
-  static Future registerUser({
-    required final String phoneNumber, 
-    required PhoneCodeSent codeSent,
-    }) async {
-     await _auth.
-    verifyPhoneNumber(
-      phoneNumber: phoneNumber,
-      verificationCompleted: (PhoneAuthCredential credential) async {
-        await _auth.signInWithCredential(credential);
-      },
-      verificationFailed: (FirebaseAuthException e) {
-        if (e.code == 'invalid-phone-number') {
-          debugPrint('The provided number is not valid'); 
-        }
-      },
-      codeSent: codeSent,
-      codeAutoRetrievalTimeout: (String verificationId) {},
-    );
-   
+  Future<String?> sendVerificationCode(String phoneNumber) async {
+    _phoneNumber = phoneNumber;
+    try {
+      // Start the phone number verification process
+      final verificationId = await _auth.verifyPhoneNumber(
+        phoneNumber: phoneNumber,
+        timeout: const Duration(seconds: 60),
+        codeAutoRetrievalTimeout: (String verificationId) {
+          // Handle the timeout
+        },
+        verificationCompleted: (PhoneAuthCredential credential) {
+          // Automatically sign in the user if verification is complete
+          _auth.signInWithCredential(credential);
+        },
+        verificationFailed: (FirebaseAuthException exception) {
+          // Handle the verification failure
+        },
+        codeSent: (String verificationId, int? resendToken) {
+          _verificationId = verificationId;
+          _resendToken = resendToken;
+          _isCodeSent = true;
+          notifyListeners();
+        },
+      );
+    } catch (e) {
+      // Handle any errors
+      return null;
+    }
   }
 
-static Future signIn(String verificationId, String otp) async {
-  await _auth
-      .signInWithCredential(PhoneAuthProvider.credential(
+  Future<Users?> signInWithVerificationCode(
+      String verificationId, String verificationCode) async {
+    try {
+      final credential = PhoneAuthProvider.credential(
         verificationId: verificationId,
-         smsCode: otp, 
-         ), 
-  );
-}
+        smsCode: verificationCode,
+      );
+      final userCredential = await _auth.signInWithCredential(credential);
+      final user = userCredential.user;
+      if (user != null) {
+        return Users(
+          uid: user.uid,
+          phoneNumber: user.phoneNumber!,
+        );
+      } else {
+        return null;
+      }
+    } catch (e) {
+      // Handle any errors
+      return null;
+    }
+  }
 
-
-
-
-
-
-
+  Future<void> signOut() async {
+    await _auth.signOut();
+  }
 }

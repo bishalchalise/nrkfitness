@@ -1,19 +1,19 @@
-import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:nrkfitness/features/authentication/viewmodels/auth_vm.dart';
 import 'package:nrkfitness/features/shared/views/widgets/app_button.dart';
 import 'package:nrkfitness/features/authentication/views/widgets/otp_input.dart';
 import 'package:nrkfitness/features/shared/views/widgets/text_builder.dart';
-import 'package:nrkfitness/utilities/app_routes.dart';
 import 'package:provider/provider.dart';
 
-class AuthScreen extends StatelessWidget {
-  final String verificationId;
+class OtpScreen extends StatelessWidget {
+  final String? verificationId;
 
-  const AuthScreen({
+  const OtpScreen({
     super.key,
     required this.verificationId,
   });
+
+
 
   @override
   Widget build(BuildContext context) {
@@ -90,8 +90,7 @@ class AuthScreen extends StatelessWidget {
                     children: [
                       Padding(
                         padding: const EdgeInsets.all(16.0),
-                        child: _loginButtonBuilder(
-                            context, verificationId, authVm),
+                        child: _loginButtonBuilder(context, verificationId!, authVm),
                       ),
                       const SizedBox(
                         height: 10,
@@ -183,20 +182,9 @@ Widget _loginButtonBuilder(
       Expanded(
         child: AppButton(
           onPressed: () async {
-       
-            final otp = vm.groupOtp();
-            final credentials = PhoneAuthProvider.credential(
-                verificationId: verificatinId, smsCode: otp);
 
-            try {
-              vm.loginUser(verificatinId, otp);
-              Navigator.pushNamed(context,
-                AppRoutes.userInfo,
-              );
-             
-            } catch (e) {
-             
-            }
+            print("The verification ID is $verificatinId");
+            vm.signInWithVerificationCode(vm.otpController.text);
           },
           text: 'Login',
         ),

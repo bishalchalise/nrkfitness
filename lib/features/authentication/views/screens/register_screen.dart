@@ -1,13 +1,12 @@
 import 'package:flutter/material.dart';
 import 'package:nrkfitness/features/authentication/viewmodels/auth_vm.dart';
-import 'package:nrkfitness/features/authentication/views/screens/auth_screen.dart';
 import 'package:nrkfitness/features/shared/views/widgets/app_button.dart';
 import 'package:nrkfitness/features/shared/views/widgets/app_inut.dart';
 import 'package:nrkfitness/utilities/app_routes.dart';
 import 'package:provider/provider.dart';
 
-class LoginScreen extends StatelessWidget {
-  const LoginScreen({super.key});
+class RegisterScreen extends StatelessWidget {
+  const RegisterScreen({super.key});
 
   @override
   Widget build(BuildContext context) {
@@ -103,19 +102,9 @@ Widget _loginButtonBuilder(BuildContext context, final AuthVm vm) {
       Expanded(
         child: AppButton(
           onPressed: () {
-            vm.registerUser(
-              codeSent: (
-                String verificationId,
-                int? resendToken,
-                
-              ) async {
-                
-                Navigator.push(
-                  context,
-                  MaterialPageRoute(builder: (context, )=> AuthScreen(verificationId: verificationId,),)
-                );
-              },
-            );
+            vm.sendVerificationCode(vm.phoneNumberController.text);
+            Navigator.popAndPushNamed(context, AppRoutes.otpScreen);
+            //
           
           },
           text: 'Continue',
@@ -130,10 +119,10 @@ Widget _skipLogin(final BuildContext context) {
     mainAxisAlignment: MainAxisAlignment.center,
     children: [
       GestureDetector(
-        onTap:() =>  Navigator.pushNamed(
-                  context,
-                  AppRoutes.authScreen,
-                ),
+        onTap: () => Navigator.pushNamed(
+          context,
+          AppRoutes.otpScreen,
+        ),
         child: Text(
           "Skip Login",
           style: TextStyle(
@@ -155,3 +144,16 @@ String? validateMobile(String value) {
   }
   return null;
 }
+
+
+    // Navigator.push(
+    //                 context,
+    //                 MaterialPageRoute(
+    //                   builder: (
+    //                     context,
+    //                   ) =>
+    //                       AuthScreen(
+    //                     verificationId: verificationId,
+    //                   ),
+    //                 )
+    //                 );
