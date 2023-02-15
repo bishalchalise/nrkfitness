@@ -24,10 +24,7 @@ class AppInput extends StatelessWidget {
         horizontal: 0.0,
       ),
       child: TextFormField(
-            onChanged: (val) {
-             validMobileNumber.validMobileNumber(val);
-             
-      }, 
+        onChanged: (val) {},
         keyboardType: TextInputType.phone,
         style: const TextStyle(
           fontWeight: FontWeight.w500,
@@ -58,7 +55,6 @@ class AppInput extends StatelessWidget {
           LengthLimitingTextInputFormatter(14),
           // FilteringTextInputFormatter.digitsOnly
         ],
-     
       ),
     );
   }

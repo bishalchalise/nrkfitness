@@ -7,52 +7,44 @@ import 'package:provider/provider.dart';
 
 class RegisterScreen extends StatelessWidget {
   const RegisterScreen({super.key});
-
   @override
   Widget build(BuildContext context) {
-    return ChangeNotifierProvider<AuthVm>(
-      create: (context) {
-        return AuthVm();
-      },
-      builder: (context, child) {
-        final authVm = Provider.of<AuthVm>(context);
-        return Scaffold(
-          body: Padding(
-            padding: const EdgeInsets.all(
-              20.0,
-            ),
-            child: SizedBox(
-              height: MediaQuery.of(context).size.height,
-              child: Column(
-                mainAxisAlignment: MainAxisAlignment.center,
-                children: [
-                  Expanded(
-                    child: Column(
-                      mainAxisAlignment: MainAxisAlignment.start,
-                      children: [
-                        _headerBuilder(),
-                        const SizedBox(
-                          height: 10.0,
-                        ),
-                        textBuilder(context),
-                        const SizedBox(
-                          height: 20.0,
-                        ),
-                        _inputBuilder(authVm),
-                      ],
+    final authVm = Provider.of<AuthVm>(context, listen: false);
+    return Scaffold(
+      body: Padding(
+        padding: const EdgeInsets.all(
+          20.0,
+        ),
+        child: SizedBox(
+          height: MediaQuery.of(context).size.height,
+          child: Column(
+            mainAxisAlignment: MainAxisAlignment.center,
+            children: [
+              Expanded(
+                child: Column(
+                  mainAxisAlignment: MainAxisAlignment.start,
+                  children: [
+                    _headerBuilder(),
+                    const SizedBox(
+                      height: 10.0,
                     ),
-                  ),
-                  _loginButtonBuilder(context, authVm),
-                  const SizedBox(
-                    height: 10,
-                  ),
-                  _skipLogin(context),
-                ],
+                    textBuilder(context),
+                    const SizedBox(
+                      height: 20.0,
+                    ),
+                    _inputBuilder(authVm),
+                  ],
+                ),
               ),
-            ),
+              _loginButtonBuilder(context, authVm),
+              const SizedBox(
+                height: 10,
+              ),
+              _skipLogin(context),
+            ],
           ),
-        );
-      },
+        ),
+      ),
     );
   }
 }
@@ -102,10 +94,7 @@ Widget _loginButtonBuilder(BuildContext context, final AuthVm vm) {
       Expanded(
         child: AppButton(
           onPressed: () {
-            vm.sendVerificationCode(vm.phoneNumberController.text);
-            Navigator.popAndPushNamed(context, AppRoutes.otpScreen);
-            //
-          
+            vm.sendOtp(context);
           },
           text: 'Continue',
         ),

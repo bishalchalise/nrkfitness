@@ -15,6 +15,7 @@ class AppButton extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return MaterialButton(
+
       color: Theme.of(context).colorScheme.primary,
       padding: const EdgeInsets.all(
         20.0,
@@ -23,6 +24,7 @@ class AppButton extends StatelessWidget {
         borderRadius: BorderRadius.circular(10.0),
       ),
       onPressed: onPressed,
+      
       child: Text(
         text,
         style: const TextStyle(

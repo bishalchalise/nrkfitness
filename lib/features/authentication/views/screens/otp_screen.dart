@@ -3,107 +3,107 @@ import 'package:nrkfitness/features/authentication/viewmodels/auth_vm.dart';
 import 'package:nrkfitness/features/shared/views/widgets/app_button.dart';
 import 'package:nrkfitness/features/authentication/views/widgets/otp_input.dart';
 import 'package:nrkfitness/features/shared/views/widgets/text_builder.dart';
+import 'package:otp_text_field/style.dart';
 import 'package:provider/provider.dart';
+import 'package:otp_text_field/otp_field.dart';
 
-class OtpScreen extends StatelessWidget {
-  final String? verificationId;
+class OtpScreen extends StatefulWidget {
+  final String verificationId;
 
   const OtpScreen({
     super.key,
     required this.verificationId,
   });
 
+  @override
+  State<OtpScreen> createState() => _OtpScreenState();
+}
 
-
+class _OtpScreenState extends State<OtpScreen> {
   @override
   Widget build(BuildContext context) {
-    return ChangeNotifierProvider(
-      create: (context) {
-        return AuthVm();
-      },
-      builder: (context, child) {
-        final authVm = Provider.of<AuthVm>(context);
-        return Scaffold(
-          resizeToAvoidBottomInset: false,
-          appBar: AppBar(
-            elevation: 0,
-            backgroundColor: Colors.transparent,
-            leading: GestureDetector(
-              onTap: () {
-                Navigator.pop(context);
-              },
-              child: Icon(
-                Icons.arrow_back,
-                color: Theme.of(context).colorScheme.primary,
+    final authVm = Provider.of<AuthVm>(context, listen: false);
+
+    return Scaffold(
+      resizeToAvoidBottomInset: false,
+      appBar: AppBar(
+        elevation: 0,
+        backgroundColor: Colors.transparent,
+        leading: GestureDetector(
+          onTap: () {
+            Navigator.pop(context);
+          },
+          child: Icon(
+            Icons.arrow_back,
+            color: Theme.of(context).colorScheme.primary,
+          ),
+        ),
+        title: Text(
+          'Back',
+          style: TextStyle(
+            fontWeight: FontWeight.w500,
+            fontSize: 16.0,
+            color: Theme.of(context).colorScheme.primary,
+          ),
+        ),
+      ),
+      body: Container(
+        color: Theme.of(context).colorScheme.background,
+        height: MediaQuery.of(context).size.height,
+        child: Column(
+          mainAxisAlignment: MainAxisAlignment.spaceBetween,
+          children: [
+            Container(
+              decoration: BoxDecoration(
+                color: Colors.white,
+                borderRadius: BorderRadius.circular(5.0),
+              ),
+              height: 396,
+              width: 356,
+              padding: const EdgeInsets.all(16.0),
+              child: Column(
+                children: [
+                  _headerBuilder(),
+                  const SizedBox(
+                    height: 10.0,
+                  ),
+                  _textBuilder(context),
+                  const SizedBox(
+                    height: 20.0,
+                  ),
+                  _inputBuilder(),
+                  const SizedBox(
+                    height: 20.0,
+                  ),
+                  _secondTextBuilder(context),
+                  const SizedBox(
+                    height: 20.0,
+                  ),
+                  _otpFormBuilder(context, authVm),
+                ],
               ),
             ),
-            title: Text(
-              'Back',
-              style: TextStyle(
-                fontWeight: FontWeight.w500,
-                fontSize: 16.0,
-                color: Theme.of(context).colorScheme.primary,
+            Container(
+              height: 135,
+              width: MediaQuery.of(context).size.width,
+              color: Colors.white,
+              child: Column(
+                children: [
+                  Padding(
+                    padding: const EdgeInsets.all(16.0),
+                    child: _loginButtonBuilder(
+                        context, authVm, widget.verificationId),
+                  ),
+                  const SizedBox(
+                    height: 10,
+                  ),
+                  _skipLogin(context),
+                ],
               ),
             ),
-          ),
-          body: Container(
-            color: Theme.of(context).colorScheme.background,
-            height: MediaQuery.of(context).size.height,
-            child: Column(
-              mainAxisAlignment: MainAxisAlignment.spaceBetween,
-              children: [
-                Container(
-                  decoration: BoxDecoration(
-                    color: Colors.white,
-                    borderRadius: BorderRadius.circular(5.0),
-                  ),
-                  height: 396,
-                  width: 356,
-                  padding: const EdgeInsets.all(16.0),
-                  child: Column(
-                    children: [
-                      _headerBuilder(),
-                      const SizedBox(
-                        height: 10.0,
-                      ),
-                      _textBuilder(context),
-                      const SizedBox(
-                        height: 20.0,
-                      ),
-                      _inputBuilder(),
-                      const SizedBox(
-                        height: 20.0,
-                      ),
-                      _secondTextBuilder(context),
-                      const SizedBox(
-                        height: 20.0,
-                      ),
-                      _otpFormBuilder(context, authVm),
-                    ],
-                  ),
-                ),
-                Container(
-                  height: 135,
-                  width: MediaQuery.of(context).size.width,
-                  color: Colors.white,
-                  child: Column(
-                    children: [
-                      Padding(
-                        padding: const EdgeInsets.all(16.0),
-                        child: _loginButtonBuilder(context, verificationId!, authVm),
-                      ),
-                      const SizedBox(
-                        height: 10,
-                      ),
-                      _skipLogin(context),
-                    ],
-                  ),
-                ),
-              ],
-            ),
-          ),
-        );
-      },
+          ],
+        ),
+      ),
     );
   }
 }
@@ -176,15 +176,13 @@ Widget _inputBuilder() {
 }
 
 Widget _loginButtonBuilder(
-    BuildContext context, String verificatinId, final AuthVm vm) {
+    BuildContext context, final AuthVm authVm, String verificationId) {
   return Row(
     children: [
       Expanded(
         child: AppButton(
           onPressed: () async {
-
-            print("The verification ID is $verificatinId");
-            vm.signInWithVerificationCode(vm.otpController.text);
+            authVm.verifyCode(context);
           },
           text: 'Login',
         ),
@@ -225,17 +223,15 @@ Widget _secondTextBuilder(BuildContext context) {
 }
 
 Widget _otpFormBuilder(final BuildContext context, final AuthVm vm) {
-  return OtpForm(
-    pin1: vm.pin1,
-    pin2: vm.pin2,
-    pin3: vm.pin3,
-    pin4: vm.pin4,
-    pin5: vm.pin5,
-    pin6: vm.pin6,
+  return OTPTextField(
+    length: 6,
+    width: MediaQuery.of(context).size.width,
+    fieldWidth: 50,
+    fieldStyle: FieldStyle.box,
+    style: const TextStyle(fontSize: 16),
+    textFieldAlignment: MainAxisAlignment.spaceEvenly,
     onChanged: (value) {
-      if (value.length == 1) {
-        FocusScope.of(context).nextFocus();
-      }
+      vm.groupPin = value;
     },
   );
 }

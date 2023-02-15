@@ -16,7 +16,7 @@ class AppRouter {
       case AppRoutes.registerScreen:
         return _buildRoute(settings, const RegisterScreen());
        case AppRoutes.otpScreen:
-        return _buildRoute(settings, const OtpScreen(verificationId: 'dffsds',));  
+        return _buildRoute(settings, const OtpScreen(verificationId: '' ,));  
         case AppRoutes.userInfo:
         return _buildRoute(settings, const UserInfo());
         case AppRoutes.homeScreen:
