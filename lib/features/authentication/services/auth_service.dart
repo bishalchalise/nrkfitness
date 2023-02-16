@@ -1,30 +1,20 @@
 import 'package:firebase_auth/firebase_auth.dart';
-import 'package:flutter/material.dart';
+import 'package:nrkfitness/features/authentication/models/user_model.dart';
 
-import '../models/user_model.dart';
-
-class AuthService extends ChangeNotifier {
+class AuthService {
   final FirebaseAuth _auth = FirebaseAuth.instance;
 
-  late String _verificationId;
-  int? _resendToken;
-  String? _phoneNumber;
-  bool _isCodeSent = false;
+  String? _verificationId;
+  String? get verificationId => _verificationId;
 
-  String get verificationId => _verificationId;
-  int? get resendToken => _resendToken;
-  bool get isCodeSent => _isCodeSent;
-  String? get phoneNumber => _phoneNumber;
-
-  Future<String?> sendVerificationCode(String phoneNumber) async {
-    _phoneNumber = phoneNumber;
+  Future<void> sendVerificationCode(String phoneNumber) async {
     try {
       // Start the phone number verification process
-      final verificationId = await _auth.verifyPhoneNumber(
+      await _auth.verifyPhoneNumber(
         phoneNumber: phoneNumber,
-        timeout: const Duration(seconds: 60),
+        timeout: const Duration(seconds: 120),
         codeAutoRetrievalTimeout: (String verificationId) {
-          // Handle the timeout
+          _verificationId = verificationId;
         },
         verificationCompleted: (PhoneAuthCredential credential) {
           // Automatically sign in the user if verification is complete
@@ -34,39 +24,30 @@ class AuthService extends ChangeNotifier {
           // Handle the verification failure
         },
         codeSent: (String verificationId, int? resendToken) {
+          // Handle the code sent
           _verificationId = verificationId;
-          _resendToken = resendToken;
-          _isCodeSent = true;
-          notifyListeners();
         },
       );
     } catch (e) {
       // Handle any errors
-      return null;
+      print('Error in verifyPhone: $e');
     }
   }
 
-  Future<Users?> signInWithVerificationCode(
-      String verificationId, String verificationCode) async {
+  Future<String?> signInWithVerificationCode(
+      {required String verificationId,
+      required String verificationCode}) async {
     try {
       final credential = PhoneAuthProvider.credential(
         verificationId: verificationId,
         smsCode: verificationCode,
       );
-      final userCredential = await _auth.signInWithCredential(credential);
-      final user = userCredential.user;
-      if (user != null) {
-        return Users(
-          uid: user.uid,
-          phoneNumber: user.phoneNumber!,
-        );
-      } else {
-        return null;
-      }
+      await _auth.signInWithCredential(credential);
     } catch (e) {
       // Handle any errors
-      return null;
+      print('Error SignIn: $e');
     }
+    return null;
   }
 
   Future<void> signOut() async {

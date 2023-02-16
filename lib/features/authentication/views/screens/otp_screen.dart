@@ -6,11 +6,11 @@ import 'package:nrkfitness/features/shared/views/widgets/text_builder.dart';
 import 'package:provider/provider.dart';
 
 class OtpScreen extends StatelessWidget {
-  final String? verificationId;
+  
 
   const OtpScreen({
     super.key,
-    required this.verificationId,
+    
   });
 
 
@@ -19,7 +19,7 @@ class OtpScreen extends StatelessWidget {
   Widget build(BuildContext context) {
     return ChangeNotifierProvider(
       create: (context) {
-        return AuthVm();
+        return AuthVm(context: context);
       },
       builder: (context, child) {
         final authVm = Provider.of<AuthVm>(context);
@@ -90,7 +90,7 @@ class OtpScreen extends StatelessWidget {
                     children: [
                       Padding(
                         padding: const EdgeInsets.all(16.0),
-                        child: _loginButtonBuilder(context, verificationId!, authVm),
+                        child: _loginButtonBuilder(context, authVm),
                       ),
                       const SizedBox(
                         height: 10,
@@ -176,14 +176,12 @@ Widget _inputBuilder() {
 }
 
 Widget _loginButtonBuilder(
-    BuildContext context, String verificatinId, final AuthVm vm) {
+    BuildContext context, final AuthVm vm) {
   return Row(
     children: [
       Expanded(
         child: AppButton(
           onPressed: () async {
-
-            print("The verification ID is $verificatinId");
             vm.signInWithVerificationCode(vm.otpController.text);
           },
           text: 'Login',

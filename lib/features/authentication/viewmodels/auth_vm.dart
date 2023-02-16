@@ -1,9 +1,16 @@
+// ignore_for_file: use_build_context_synchronously
+
 import 'package:flutter/widgets.dart';
-import 'package:nrkfitness/features/authentication/models/user_model.dart';
 import 'package:nrkfitness/features/authentication/services/auth_service.dart';
+import 'package:nrkfitness/utilities/app_routes.dart';
 
 class AuthVm extends ChangeNotifier {
+  final BuildContext context;
+
+  AuthVm({required this.context});
+
   final AuthService _authService = AuthService();
+
   final TextEditingController _phoneNumberController = TextEditingController();
 
   final TextEditingController _pin1 = TextEditingController();
@@ -24,15 +31,13 @@ class AuthVm extends ChangeNotifier {
   TextEditingController get pin6 => _pin6;
   TextEditingController get otpController => _optController;
 
-  String? _verificationId;
-  String? _phoneNumber;
-  Users? _user;
-  bool _isLoading = false;
+  // String? _verificationId;
+  // String? _phoneNumber;
+  // Users? _user;
 
-  String? get verificationId => _verificationId;
-  String? get phoneNumber => _phoneNumber;
-  Users? get user => _user;
-  bool get isLoading => _isLoading;
+  // String? get verificationId => _verificationId;
+  // String? get phoneNumber => _phoneNumber;
+  // Users? get user => _user;
 
   void validMobileNumber(String value) {
     if (_phoneNumberController.text.length == 14) {
@@ -42,25 +47,36 @@ class AuthVm extends ChangeNotifier {
   }
 
   Future<String?> sendVerificationCode(String phoneNumber) async {
-    _verificationId = await _authService.sendVerificationCode(phoneNumber);
-    _phoneNumber = phoneNumber;
-    notifyListeners();
+    await _authService.sendVerificationCode(phoneNumber);
+    phoneNumber = _phoneNumberController.text;
+  
+    try {
+      Navigator.pushNamed(context, AppRoutes.otpScreen);
+    } catch (e) {
+      print("Error sending code ${e.toString()}");
+    }
+
     return null;
   }
 
   Future<String?> signInWithVerificationCode(String verificationCode) async {
-    _isLoading = true;
-    notifyListeners();
-    _user = await _authService.signInWithVerificationCode(
-        _verificationId!, verificationCode);
-    _isLoading = false;
-    notifyListeners();
+    final result = await _authService.signInWithVerificationCode(
+      verificationId: _authService.verificationId!,
+      verificationCode: _optController.text,
+    );
+    try {
+      if (result != null) {
+        Navigator.pushNamed(context, AppRoutes.homeScreen);
+      }
+    } catch (e) {
+      print('Error: ${e.toString()}');
+    }
+
     return null;
   }
 
   Future<void> signOut() async {
     await _authService.signOut();
-    _user = null;
     notifyListeners();
   }
 

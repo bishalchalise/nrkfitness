@@ -12,7 +12,7 @@ class RegisterScreen extends StatelessWidget {
   Widget build(BuildContext context) {
     return ChangeNotifierProvider<AuthVm>(
       create: (context) {
-        return AuthVm();
+        return AuthVm(context: context);
       },
       builder: (context, child) {
         final authVm = Provider.of<AuthVm>(context);
@@ -96,16 +96,13 @@ Widget _inputBuilder(final AuthVm vm) {
   );
 }
 
-Widget _loginButtonBuilder(BuildContext context, final AuthVm vm) {
+Widget _loginButtonBuilder(BuildContext context, final AuthVm authVm) {
   return Row(
     children: [
       Expanded(
         child: AppButton(
           onPressed: () {
-            vm.sendVerificationCode(vm.phoneNumberController.text);
-            Navigator.popAndPushNamed(context, AppRoutes.otpScreen);
-            //
-          
+            authVm.sendVerificationCode(authVm.phoneNumberController.text);
           },
           text: 'Continue',
         ),

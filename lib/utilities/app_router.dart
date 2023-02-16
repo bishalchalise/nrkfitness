@@ -3,7 +3,6 @@ import 'package:nrkfitness/features/authentication/views/screens/otp_screen.dart
 import 'package:nrkfitness/features/authentication/views/screens/register_screen.dart';
 import 'package:nrkfitness/screens/gym_schedulepage.dart';
 import 'package:nrkfitness/screens/home_screen.dart';
-
 import 'package:nrkfitness/screens/splash_screen.dart';
 import 'package:nrkfitness/screens/user_info.dart';
 import 'package:nrkfitness/utilities/app_routes.dart';
@@ -16,7 +15,7 @@ class AppRouter {
       case AppRoutes.registerScreen:
         return _buildRoute(settings, const RegisterScreen());
        case AppRoutes.otpScreen:
-        return _buildRoute(settings, const OtpScreen(verificationId: 'dffsds',));  
+        return _buildRoute(settings, const OtpScreen());  
         case AppRoutes.userInfo:
         return _buildRoute(settings, const UserInfo());
         case AppRoutes.homeScreen:
